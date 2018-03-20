@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+ </head>
+ <body>
+  <h2> List of URLS </h2>
+
+  <ul>
+      <% for(var url in urls) { %>
+
+        <li><%= url %> - <%= urls[url] %> </li>
+
+      <% } %>
+
+  </ul>
+
+  <a href=" ">Click here to shorten URL</a>
+
+ </body>
+ </html>
+
