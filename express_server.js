@@ -1,15 +1,25 @@
-var express = require("express");
-var app = express();
-var PORT = process.env.PORT || 8080; // default port 8080
+const express = require("express");
+const app = express();
+const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+function generateRandomString() {
+  const text = "";
+  const random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+  for (var i = 0; i < 6; i++)
+      text += random.charAt(Math.floor(Math.random() * random.length));
+
+  return text;
 };
 
 app.get("/", (req, res) => {
@@ -17,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
@@ -34,28 +44,27 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id] };
+  const templateVars = {
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id]
+  };
   res.render("urls_shows", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   console.log(req.body.longURL);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect(`/urls/${shortURL}`)        // Respond with 'Ok' (we will replace this)
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString() {
-var text = "";
-var random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
-for (var i = 0; i < 6; i++)
-    text += random.charAt(Math.floor(Math.random() * random.length));
-
-  return text;
-}
-
-console.log(generateRandomString());
