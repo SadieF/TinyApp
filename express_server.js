@@ -57,10 +57,9 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body.longURL);  // debug statement to see POST parameters
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`)        // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`)
 });
 
 app.post("/urls/:id/update", (req, res) => {
@@ -71,6 +70,12 @@ res.redirect(`/urls/${req.params.id}`);
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+app.post("/login", (req, res) => {
+
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

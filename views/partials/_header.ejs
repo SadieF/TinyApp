@@ -1,26 +1,22 @@
 <!-- views/partials/_header.ejs -->
 
 <meta charset="UTF-8">
-<title>Super Pawesome</title>
+    <title>Super Pawesome</title>
+        <link rel= "stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style>
+        body {padding-top: 50px; }
+    </style>
+        <nav class = "navbar navbar-default" role="navigation">
+            <div class = "container-fluid">
+            <div class ="navbar-header">
+                <a class ="navbar-brand" href="#">
+                 <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>TinyApp</a>
 
-<link rel= "stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-
-<style>
- body {padding-top: 50px; }
-</style>
-
-<nav class = "navbar navbar-default" role="navigation">
-<div class = "container-fluid">
-
- <div class ="navbar-header">
-   <a class ="navbar-brand" href="#">
-     <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
-     TinyApp
-   </a>
-
-   <ul class="nav navbar-nav">
-     <li><a href="/">Home<a/></li>
-     <li><a href="/about">About</a></li>
+    <form action="/login" method="POST" style="margin:150px;">
+     <label for="username">Login: </label>
+      <input id="username" type="text" name="username" placeholder="Username" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form>
 
    </ul>
  </div>
