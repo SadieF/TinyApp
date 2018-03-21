@@ -50,10 +50,9 @@ app.get("/hello", (req, res) => {
 app.get("/urls/new", (req, res) => {
     let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    username: req.cookies["username"]
     };
-    res.render("urls_index", templateVars);
-  res.render("urls_new");
+    res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -89,6 +88,11 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
 
   res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username", req.body.username);
   res.redirect("/urls");
 });
 
