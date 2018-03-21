@@ -1,16 +1,21 @@
 let express = require("express");
 let app = express();
 let PORT = process.env.PORT || 8080; // default port 8080
+let cookieParser = require('cookie-parser')
 
 app.set("view engine", "ejs");
 
+app.use(cookieParser());
+
 let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
 
 function generateRandomString() {
   let text = "";
@@ -27,7 +32,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"],
+    };
   res.render("urls_index", templateVars);
 });
 
@@ -40,13 +48,19 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+    let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"],
+    };
+    res.render("urls_index", templateVars);
   res.render("urls_new");
 });
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id]
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies["username"],
   };
   res.render("urls_shows", templateVars);
 });
