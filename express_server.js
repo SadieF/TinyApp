@@ -1,20 +1,20 @@
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 8080; // default port 8080
+let express = require("express");
+let app = express();
+let PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
-const bodyParser = require("body-parser");
+let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-const urlDatabase = {
+let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
 function generateRandomString() {
-  const text = "";
-  const random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+  let text = "";
+  let random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
   for (var i = 0; i < 6; i++)
       text += random.charAt(Math.floor(Math.random() * random.length));
@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
@@ -44,22 +44,27 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = {
+  let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id]
   };
   res.render("urls_shows", templateVars);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
+});
+
 app.post("/urls", (req, res) => {
   console.log(req.body.longURL);  // debug statement to see POST parameters
-  const shortURL = generateRandomString();
+  let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`)        // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
