@@ -66,14 +66,25 @@ app.post("/urls/register", (req, res) => {
   let userId = generateRandomString();
   res.cookie("user_id", userId);
 
-  users[userId] = {
+for (let key in users) {
+  const user = users[key];
+ if  (user.email === req.body.email) {
+  return res.redirect(400, "/urls/register");
+  }
+};
+
+if (req.body.email && req.body.password) {
+    users[userId] = {
     id: userId,
     email: req.body.email,
     password: req.body.password
   };
+    res.redirect("/urls");
+} else {
+  res.redirect(400, "/urls/register");
+}
+  // console.log(users);
 
-  console.log(users);
-  res.redirect("/urls");
 });
 
 
