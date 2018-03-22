@@ -12,21 +12,6 @@
             <div class ="navbar-header">
                 <a class ="navbar-brand" href="#">
                  <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>TinyApp</a>
-    <% if( username) { %>
-        <h1><%= username %></h1>
-        <form action="/logout" method="POST" style="margin:150px;">
-           <label for="username">Logout: </label>
-        <input id="username" type="text" name="username" placeholder="<%= username%>" style="width: 300px">
-        <input type="submit" value="Submit">
-    </form>
-
-    <% } else{ %>
-        <form action="/login" method="POST" style="margin:150px;">
-           <label for="username">Login: </label>
-        <input id="username" type="text" name="username" placeholder="Username" style="width: 300px">
-        <input type="submit" value="Submit">
-    </form>
-    <% } %>
 
    </ul>
  </div>
