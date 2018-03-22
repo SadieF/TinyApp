@@ -5,6 +5,7 @@
         <link rel= "stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <style>
         body {padding-top: 50px; }
+
     </style>
 
         <nav class = "navbar navbar-default" role="navigation">
@@ -12,7 +13,19 @@
             <div class ="navbar-header">
                 <a class ="navbar-brand" href="#">
                  <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>TinyApp</a>
+<a href="/register">Register</a>
+<a href="/login">Login</a>
 
+
+<% if( username) { %>
+        <h1><%= username %></h1>
+        <form action="/logout" method="POST" style="margin:150px;">
+           <label for="username">Logout: </label>
+        <input id="username" type="text" name="username" placeholder="<%= username%>" style="width: 300px">
+        <input type="submit" value="Submit">
+    </form>
+
+    <% } %>
    </ul>
  </div>
 </div>
