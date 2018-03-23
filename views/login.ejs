@@ -5,11 +5,11 @@
   </head>
   <body style="font-size:20px; padding:50px;">
 
-<% if( username) { %>
-        <h1><%= username %></h1>
+<% if( user) { %>
+      <%= user_email %>
         <form action="/logout" method="POST" style="margin:150px;">
-           <label for="username">Logout: </label>
-        <input id="username" type="text" name="username" placeholder="<%= username%>" style="width: 300px">
+           <label for="user">Logout: </label>
+        <input id="user" type="text" name="user" placeholder="<%= user%>" style="width: 300px">
         <input type="submit" value="Submit">
     </form>
 
