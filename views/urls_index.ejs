@@ -8,16 +8,22 @@
   <h2> List of URLS </h2>
 
 
-  <ul>
-      <% for(var url in urls) { %>
 
-        <li><%= url %> - <%= urls[url] %> </li>
+
+      <% for(var url in urls) { %>
+<% if ((urls[url].uid) === (user_id)) { %>
+
+<ul>
+        <li><%= urls[url].shortURL %> - <%= urls[url].longURL %> </li>
         <form method="POST" action="/urls/<%= url%>/delete">
         <button type="submit"> Delete </button>
 
 
         </form>
+
+  </ul>
         <% } %>
+           <% } %>
 
   </ul>
 

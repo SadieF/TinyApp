@@ -1,22 +1,34 @@
-let express = require("express");
-let app = express();
-let PORT = process.env.PORT || 8080; // default port 8080
-let cookieParser = require('cookie-parser')
+let express = require("express"); //Requires Express
+let app = express(); //calls the Express function
+let PORT = process.env.PORT || 8080; // Sets default port at 8080
+let cookieParser = require('cookie-parser') //Requires cookieParser
 
-app.set("view engine", "ejs");
+app.set("view engine", "ejs"); //Sets view engine to EJS
 
-app.use(cookieParser());
+app.use(cookieParser()); //uses cookieParser
 
 let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({
     extended: true
-}));
+})); //Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option.
 
 
 let urlDatabase = {
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com"
-};
+userID: {
+  shortURL: "b2xVn2",
+  longURL: "http://www.lighthouselabs.ca",
+  uid: "asdfg"
+},
+userID2: {
+  shortURL: "ue65ng",
+  longURL: "http://www.google.ca",
+  uid: "asdasdfgh"
+}
+}
+// /Sets URLDatabase when URLs, and their random number strings
+
+// console.log(urlDatabas)
+
 
 const users = {
     "userRandomID": {
@@ -30,6 +42,11 @@ const users = {
         password: "dishwasher-funk"
     }
 }
+
+// for (key in users) {
+//   users[req.cookies.user_id]
+// }
+
 
 function generateRandomString() {
     let text = "";
@@ -64,6 +81,7 @@ app.get("/urls", (req, res) => {
     };
     res.render("urls_index", templateVars);
 });
+
 
 app.get("/login", (req, res) => {
     let user_id = req.cookies.user_id;
@@ -128,13 +146,14 @@ app.get("/urls/new", (req, res) => {
         user_id: user_id,
         user: user
     };
-
     if (req.cookies.user_id) {
     res.render("urls_new", templateVars);
   } else {
     res.redirect(400, "/login");
   }
 });
+
+console.log(urlDatabase);
 
 app.get("/urls/:id", (req, res) => {
     let user_id = req.cookies.user_id;
@@ -156,8 +175,13 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-    let shortURL = generateRandomString();
-    urlDatabase[shortURL] = req.body.longURL;
+let shortURL = generateRandomString();
+urlDatabase[req.cookies.user_id]= {
+        shortURL: shortURL,
+        longURL: req.body.longURL,
+        uid: req.cookies.user_id
+}
+    console.log(urlDatabase);
     res.redirect(`/urls/${shortURL}`)
 });
 
