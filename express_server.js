@@ -1,9 +1,10 @@
 const express = require("express"); //Requires Express
 const app = express(); //calls the Express function
 const PORT = process.env.PORT || 8080; // Sets default port at 8080
-const cookieParser = require('cookie-parser') //Requires cookieParser
-const bcrypt = require('bcrypt')
-// const password = req.body.password;
+const cookieParser = require('cookie-parser'); //Requires cookieParser
+const bcrypt = require('bcrypt');
+
+
 //Sets view engine to EJS
 app.set("view engine", "ejs");
 //uses cookieParser
@@ -117,7 +118,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-
+    const { email, password } = req.body;
 
     for (let user_id in users) {
         const user = users[user_id];
@@ -131,7 +132,7 @@ app.post("/register", (req, res) => {
         users[userId] = {
             id: userId,
             email: req.body.email,
-            password: req.body.password
+            password: bcrypt.hashSync(password, 10)
         };
         res.cookie("user_id", userId);
         res.redirect("/urls");
@@ -163,14 +164,7 @@ app.get("/urls/:id", (req, res) => {
         longURL: urlDatabase[shortURL].longURL,
         user: user
     };
-    if (user) {
-        let templateVars = {
-            user: user
-        };
         res.render("urls_shows", templateVars)
-    } else {
-        res.redirect(400, "/login");
-    }
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -194,6 +188,7 @@ app.post("/urls", (req, res) => {
     }
     res.redirect(`/urls/${shortURL}`)
     console.log(urlDatabase);
+    console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
@@ -207,16 +202,28 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
 });
 
-app.post("/login", (req, res) => {
-    for (let currentUser in users) {
-        if ((req.body.email === users[currentUser].email) && (req.body.password === users[currentUser].password)) {
-            res.cookie("user_id", users[currentUser].id);
-            res.redirect("/urls");
-            return;
+
+function checkUserEmail(email){
+    for(var key in users){
+        if(users[key].email===email){
+            return users[key];
         }
     }
-    res.redirect(403, "/register")
-});
+}
+app.post("/login", (req, res) => {
+    const {email, password} = req.body;
+    var result = checkUserEmail(req.body.email); //Check if user exists
+    if(result) { //means the user email exists
+    if(bcrypt.compareSync(req.body.password, result.password)) { //check if password matches hashed password
+        res.cookie("user_id", result.id);
+        res.redirect('/urls');
+        } else { //password does not match
+            res.send(400, "/login");
+        }
+        } else { //user email does not exist
+            res.send(403, "/register");
+        }
+    });
 
 
 app.post("/logout", (req, res) => {
