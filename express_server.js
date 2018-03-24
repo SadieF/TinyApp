@@ -1,7 +1,9 @@
-let express = require("express"); //Requires Express
-let app = express(); //calls the Express function
-let PORT = process.env.PORT || 8080; // Sets default port at 8080
-let cookieParser = require('cookie-parser') //Requires cookieParser
+const express = require("express"); //Requires Express
+const app = express(); //calls the Express function
+const PORT = process.env.PORT || 8080; // Sets default port at 8080
+const cookieParser = require('cookie-parser') //Requires cookieParser
+const bcrypt = require('bcrypt')
+// const password = req.body.password;
 //Sets view engine to EJS
 app.set("view engine", "ejs");
 //uses cookieParser
@@ -11,6 +13,7 @@ let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
 
 // /Sets URLDatabase when URLs, and their random number strings
 let urlDatabase = {
@@ -45,6 +48,17 @@ const users = {
     }
 }
 
+function urlsForUser(user_id) {
+    let newDB = {}
+    for (let shortURL in urlDatabase) {
+        if (user_id === urlDatabase[shortURL].uid) {
+            newDB[shortURL] = urlDatabase[shortURL].longURL;
+        }
+    }
+ return newDB;
+}
+
+// console.log(urlsForUser(ue65ng));
 
 function generateRandomString() {
     let text = "";
@@ -73,8 +87,9 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
     let user_id = req.cookies.user_id; //Variable for user_id to identify user
     let user = users[user_id]; //Sets user as the user_id within the users object
+    let userUrls = urlsForUser(user_id);
     let templateVars = {
-        urls: urlDatabase,
+        urls: userUrls,
         user_id: user_id,
         user: user
     }; //sets TemplateVars object, with urls(database), user_id, and user
@@ -100,8 +115,9 @@ app.get("/register", (req, res) => {
     res.render("register", templateVars);
 });
 
-
 app.post("/register", (req, res) => {
+
+
     for (let user_id in users) {
         const user = users[user_id];
         if (user.email === req.body.email) {
@@ -146,12 +162,26 @@ app.get("/urls/:id", (req, res) => {
         longURL: urlDatabase[shortURL].longURL,
         user: user
     };
-    res.render("urls_shows", templateVars);
+    if (user) {
+        let templateVars = {
+            user: user
+        };
+        res.render("urls_shows", templateVars)
+    } else {
+        res.redirect(400, "/login");
+    }
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+    if (user) {
+        let templateVars = {
+            user: user
+        };
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
+    } else {
+    res.redirect(400, "/login");
+    }
 });
 
 app.post("/urls", (req, res) => {
@@ -167,8 +197,6 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/update", (req, res) => {
     urlDatabase[req.params.id].longURL = req.body.longURL;
-    console.log("after updating");
-    console.log(urlDatabase);
     res.redirect(`/urls/${req.params.id}`);
 })
 
@@ -182,11 +210,11 @@ app.post("/login", (req, res) => {
     for (let currentUser in users) {
         if ((req.body.email === users[currentUser].email) && (req.body.password === users[currentUser].password)) {
             res.cookie("user_id", users[currentUser].id);
-            res.redirect("/");
+            res.redirect("/urls");
             return;
         }
     }
-    res.redirect(403, "/login")
+    res.redirect(403, "/register")
 });
 
 
