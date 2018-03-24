@@ -1,14 +1,20 @@
 const express = require("express"); //Requires Express
 const app = express(); //calls the Express function
 const PORT = process.env.PORT || 8080; // Sets default port at 8080
-const cookieParser = require('cookie-parser'); //Requires cookieParser
+// const cookieParser = require('cookie-parser'); //Requires cookieParser
 const bcrypt = require('bcrypt');
-
+const cookieSession = require('cookie-session')
 
 //Sets view engine to EJS
 app.set("view engine", "ejs");
-//uses cookieParser
-app.use(cookieParser());
+//uses cookieSession
+app.use(cookieSession({
+  name: 'session',
+  keys: ['meow'],
+
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 //Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option.
 let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({
@@ -87,7 +93,7 @@ app.get("/hello", (req, res) => {
 //Shows HTML in the route
 
 app.get("/urls", (req, res) => {
-    let user_id = req.cookies.user_id; //Variable for user_id to identify user
+    let user_id = req.session.user_id; //Variable for user_id to identify user
     let user = users[user_id]; //Sets user as the user_id within the users object
     let userUrls = urlsForUser(user_id);
     let templateVars = {
@@ -100,7 +106,7 @@ app.get("/urls", (req, res) => {
 
 
 app.get("/login", (req, res) => {
-    let user_id = req.cookies.user_id;
+    let user_id = req.session.user_id;
     let user = users[user_id];
     let templateVars = {
         user: user
@@ -109,7 +115,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    let user_id = req.cookies.user_id;
+    let user_id = req.session.user_id;
     let user = users[user_id];
     let templateVars = {
         user: user
@@ -134,7 +140,7 @@ app.post("/register", (req, res) => {
             email: req.body.email,
             password: bcrypt.hashSync(password, 10)
         };
-        res.cookie("user_id", userId);
+        req.session.user_id = userId;
         res.redirect("/urls");
     } else {
         res.redirect(400, "/register");
@@ -142,7 +148,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-    let user_id = req.cookies.user_id;
+    let user_id = req.session.user_id;
     let user = users[user_id];
 
     if (user) {
@@ -156,7 +162,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-    let user_id = req.cookies.user_id;
+    let user_id = req.session.user_id;
     let user = users[user_id];
     let shortURL = req.params.id;
     let templateVars = {
@@ -184,11 +190,9 @@ app.post("/urls", (req, res) => {
     urlDatabase[shortURL] = {
         shortURL: shortURL,
         longURL: req.body.longURL,
-        uid: req.cookies.user_id
+        uid: req.session.user_id
     }
     res.redirect(`/urls/${shortURL}`)
-    console.log(urlDatabase);
-    console.log(users);
 });
 
 app.post("/urls/:id/update", (req, res) => {
@@ -215,7 +219,7 @@ app.post("/login", (req, res) => {
     var result = checkUserEmail(req.body.email); //Check if user exists
     if(result) { //means the user email exists
     if(bcrypt.compareSync(req.body.password, result.password)) { //check if password matches hashed password
-        res.cookie("user_id", result.id);
+        req.session.user_id = result.id;
         res.redirect('/urls');
         } else { //password does not match
             res.send(400, "/login");
@@ -227,7 +231,7 @@ app.post("/login", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-        res.clearCookie("user_id");
+        req.session = null;
         res.redirect("/urls");
     });
 
