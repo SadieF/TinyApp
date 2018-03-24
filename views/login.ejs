@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-        <% include partials/_header %>
+    <% include partials/_header %>
   </head>
   <body style="font-size:20px; padding:50px;">
-
-<% if( user) { %>
-      <%= user_email %>
-        <form action="/logout" method="POST" style="margin:150px;">
-           <label for="user">Logout: </label>
-        <input id="user" type="text" name="user" placeholder="<%= user%>" style="width: 300px">
-        <input type="submit" value="Submit">
+    <% if( user) { %>
+    <%= user.email %>
+    <form action="/logout" method="POST" style="margin:150px;">
+      <label for="user">Logout: </label>
+      <input id="user" type="text" name="user" placeholder="<%= user%>" style="width: 300px">
+      <input type="submit" value="Submit">
     </form>
-
     <% } else{ %>
-
-        <form action="/login" method="POST" style="margin:150px;">
-           <label for="email">Email: </label>
-        <input id="email" type="email" name="email" placeholder="Enter Email" style="width: 300px">
-         <br> <label for="password">Password: </label>
-        <input id="password" type="password" name="password" placeholder="Enter Password" style="width: 300px">
-        <input type="submit" value="Submit">
-      </form>
-      <% } %>
+    <form action="/login" method="POST" style="margin:150px;">
+      <label for="email">Email: </label>
+      <input id="email" type="email" name="email" placeholder="Enter Email" style="width: 300px">
+      <br> <label for="password">Password: </label>
+      <input id="password" type="password" name="password" placeholder="Enter Password" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form>
+    <% } %>
   </body>
 </html>
-

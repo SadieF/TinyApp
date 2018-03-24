@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-  <% include ./partials/_header %>
-
- </head>
- <body>
-  <ul>
-
+  <head>
+    <title>TinyApp</title>
+    <% include ./partials/_header %>
+  </head>
+  <body>
+    <ul>
       <b> Your Shortened URL: </b><%= shortURL %>
-    <form method="POST" action="/urls/<%= shortURL%>/update">
-    <input type="text" name="longURL" value="<%= longURL%>">
-    <button type="submit">Update</button>
-  </form>
-
-  </ul>
-
- </body>
- </html>
-
+      <form method="POST" action="/urls/<%= shortURL %>/update">
+        <input type="text" name="longURL" value="<%= longURL %>">
+        <button type="submit">Update</button>
+      </form>
+    </ul>
+    <a href="/urls">Link back to URLS</a>
+  </body>
+</html>
