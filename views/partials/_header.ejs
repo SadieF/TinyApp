@@ -8,12 +8,12 @@
 <body>
 <!-- Sets Logout button if user is logged in -->
     <% if( user) { %>
-    <strong>Hello <%= user.email %>!</strong>
-        <form action="/logout" method="POST">
+    <strong style="font-size:25px; padding:15px;">Hello <%= user.email %>!</strong>
+    <form action="/logout" method="POST" style="float: right;">
             <input type="submit" value="Logout">
         </form>
     <% } else{ %>
-    <!-- Otherwise show Register an dLogin buttons -->
+    <!-- Otherwise show Register and Login buttons -->
     <a href="/register">Register</a> <a href="/login">Login</a>
     <% } %>
 

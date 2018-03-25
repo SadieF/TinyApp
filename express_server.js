@@ -21,8 +21,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
-
 // /Sets URLDatabase when URLs, and their random number strings
 let urlDatabase = {
     b2xVn2: {
@@ -56,6 +54,15 @@ const users = {
     }
 }
 
+function generateRandomString() {
+    let text = "";
+    let random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+    for (var i = 0; i < 6; i++)
+        text += random.charAt(Math.floor(Math.random() * random.length));
+    return text;
+}
+
+//Checks that the user_id belongs to the url
 function urlsForUser(user_id) {
     let newDB = {}
     for (let shortURL in urlDatabase) {
@@ -66,15 +73,14 @@ function urlsForUser(user_id) {
  return newDB;
 }
 
-// console.log(urlsForUser(ue65ng));
-
-function generateRandomString() {
-    let text = "";
-    let random = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-    for (var i = 0; i < 6; i++)
-        text += random.charAt(Math.floor(Math.random() * random.length));
-    return text;
+function checkUserEmail(email){
+    for(var key in users){
+        if(users[key].email===email){
+            return users[key];
+        }
+    }
 }
+
 //Generates a random string of 6 characters
 
 app.get("/", (req, res) => {
@@ -100,10 +106,13 @@ app.get("/urls", (req, res) => {
         urls: userUrls,
         user_id: user_id,
         user: user
-    }; //sets TemplateVars object, with urls(database), user_id, and user
-    res.render("urls_index", templateVars);
-});//renders the urls_index template and passes templateCars as an argument
-
+    };
+    if (user) {
+        res.render("urls_index", templateVars);
+    } else {
+        res.status(400).send('Please <a href="/login">login</a> or <a href="/register">register</a>.');
+    }
+});
 
 app.get("/login", (req, res) => {
     let user_id = req.session.user_id;
@@ -129,7 +138,7 @@ app.post("/register", (req, res) => {
     for (let user_id in users) {
         const user = users[user_id];
         if (user.email === req.body.email) {
-            return res.redirect(400, "/register");
+            return res.status(400).send('User exists, please <a href="/login">login</a>.')
         }
     }
 
@@ -143,7 +152,7 @@ app.post("/register", (req, res) => {
         req.session.user_id = userId;
         res.redirect("/urls");
     } else {
-        res.redirect(400, "/register");
+        res.status(400).send('Looks like you left some fields blank. Please <a href="/register">register</a> again.')
     }
 });
 
@@ -157,7 +166,7 @@ app.get("/urls/new", (req, res) => {
         };
         res.render("urls_new", templateVars);
     } else {
-        res.redirect(400, "/login");
+        res.status(400).send('Access forbidden. Please <a href="/login">login</a> to proceed.');
     }
 });
 
@@ -165,23 +174,31 @@ app.get("/urls/:id", (req, res) => {
     let user_id = req.session.user_id;
     let user = users[user_id];
     let shortURL = req.params.id;
-    let templateVars = {
+
+    if (user) {
+        let templateVars = {
         shortURL: shortURL,
         longURL: urlDatabase[shortURL].longURL,
-        user: user
-    };
+        user: user,
+        };
         res.render("urls_shows", templateVars)
+    } else {
+        res.status(400).send('Access forbidden. Please <a href="/login">login</a> to proceed.');
+    }
+
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+    let user_id = req.session.user_id;
+    let user = users[user_id];
+    let templateVars = {
+        user: user
+    };
     if (user) {
-        let templateVars = {
-            user: user
-        };
-    delete urlDatabase[req.params.id];
-    res.redirect("/urls");
+        delete urlDatabase[req.params.id];
+        res.redirect("/urls");
     } else {
-    res.redirect(400, "/login");
+        res.status(400).send('Access forbidden. Please <a href="/login">login</a> to proceed.')
     }
 });
 
@@ -207,13 +224,6 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
-function checkUserEmail(email){
-    for(var key in users){
-        if(users[key].email===email){
-            return users[key];
-        }
-    }
-}
 app.post("/login", (req, res) => {
     const {email, password} = req.body;
     var result = checkUserEmail(req.body.email); //Check if user exists
@@ -222,10 +232,10 @@ app.post("/login", (req, res) => {
         req.session.user_id = result.id;
         res.redirect('/urls');
         } else { //password does not match
-            res.send(400, "/login");
+            res.status(400).send('Incorrect details. Please <a href="/login">login</a>.')
         }
         } else { //user email does not exist
-            res.send(403, "/register");
+            res.status(403).send('Email does not exist in the system. Please <a href="/register">register</a> to proceed.')
         }
     });
 

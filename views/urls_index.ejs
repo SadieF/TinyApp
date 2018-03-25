@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>TinyApp</title>
-    <% include ./partials/_header %>
-  </head>
-  <body>
-
-
-<h2> List of URLS </h2>
-    <% for(let shortURL in urls) { %>
-    <% var longURL = urls[shortURL] %>
-
-
-        <ul>
-          <li><%= shortURL %> - <%= longURL %> </li>
-          <form method="POST" action="/urls/<%= shortURL%>/delete">
+   <head>
+      <title>TinyApp</title>
+      <% include ./partials/_header %>
+   </head>
+   <body>
+      <p><strong> List of URLS </strong></p>
+      <% for(let shortURL in urls) { %>
+      <% var longURL = urls[shortURL] %>
+      <ul>
+         <li>localhost:8080/u/<%= shortURL %> - <%= longURL %> </li>
+         <form method="POST" action="/urls/<%= shortURL%>/delete">
             <button type="submit"> Delete </button>
-          </form>
-        </ul>
-        <a href="/urls/new">Click here to shorten URL</a>
-
-<% } %>
-
-
-    <h2>You will need to login <a href="/login">here</a> to view your URLS</h2>
-    <h2>If you don't have an account you can register <a href="/register">here</a></h2>
-    </ul>
-
-  </body>
+         </form>
+              <form method="POST" action="/urls/<%= shortURL%>/update">
+            <button type="submit"> Edit </button>
+         </form>
+      </ul>
+      <a href="/urls/new">Click here to shorten URL</a>
+      <% } %>
+   </body>
 </html>

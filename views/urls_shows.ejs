@@ -4,14 +4,15 @@
     <title>TinyApp</title>
     <% include ./partials/_header %>
   </head>
-  <body>
+  <body style="font-size:15px; padding:75px;">
     <ul>
-      <b> Your Shortened URL: </b><%= shortURL %>
+      <b> Your Shortened URL: </b>localhost:8080/u/<%= shortURL %> - <%= longURL %>
       <form method="POST" action="/urls/<%= shortURL %>/update">
-        <input type="text" name="longURL" value="<%= longURL %>">
+        <input type="text" name="longURL" value="<%= longURL %>" placeholder="<%= longURL %>" style="width: 300px">
         <button type="submit">Update</button>
       </form>
     </ul>
     <a href="/urls">Link back to URLS</a>
+    <a href="/urls/new">Create a new Short Link</a>
   </body>
 </html>
